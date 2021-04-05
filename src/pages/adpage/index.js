@@ -39,7 +39,7 @@ const Page= () =>{
          {adInfo.category &&
             <BreadCrumb>
                 Você está aqui:
-                <Link to="./">Home</Link>
+                <Link to="/">Home</Link>
                 /
                 <Link to={`/ads?state=${adInfo.stateName}`}>{adInfo.stateName}</Link>
                 /

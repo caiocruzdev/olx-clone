@@ -1,5 +1,6 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
+import RouteHandler from './components/RouteHandler';
 import Home from './pages/home/index';
 import About from './pages/about';
 import SignIn from './pages/signin';
@@ -10,25 +11,28 @@ import NotFound from './pages/NotFound/NotFound';
 function Routes(){
     return (
         <Switch>
-            <Route exact={true} path='/'>
+            <RouteHandler exact={true} path='/'>
                  <Home/>
-            </Route>
+            </RouteHandler>
             
-            <Route exact={true} path='/about'>
+            <RouteHandler exact={true} path='/about'>
                 <About/>
-            </Route>
-            <Route exact = {true} path='/signin'>
+            </RouteHandler>
+            <RouteHandler exact = {true} path='/signin'>
                 <SignIn/>
-            </Route>
-            <Route exact = {true} path='/signup'>
+            </RouteHandler>
+            <RouteHandler exact = {true} path='/signup'>
                 <SignUp/>
-            </Route>
-            <Route exact = {true} path='/ad/:id'>
+            </RouteHandler>
+            <RouteHandler exact = {true} path='/ad/:id'>
                 <AdPage/>
-            </Route>
-            <Route>
+            </RouteHandler>
+            <RouteHandler private exact = {true} path='/post-an-ad'>
+            <About/>
+            </RouteHandler>
+            <RouteHandler>
                 <NotFound/>
-            </Route>
+            </RouteHandler>
         </Switch>
     );//O switch serve para checar as paginas sempre usando o 'OU'.
 };
