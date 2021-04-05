@@ -6,7 +6,9 @@ import About from './pages/about';
 import SignIn from './pages/signin';
 import SignUp from './pages/signup';
 import AdPage from './pages/adpage/index';
+import AddAd from './pages/AddAd';
 import NotFound from './pages/NotFound/NotFound';
+
 
 function Routes(){
     return (
@@ -28,7 +30,7 @@ function Routes(){
                 <AdPage/>
             </RouteHandler>
             <RouteHandler private exact = {true} path='/post-an-ad'>
-            <About/>
+            <AddAd/>
             </RouteHandler>
             <RouteHandler>
                 <NotFound/>
