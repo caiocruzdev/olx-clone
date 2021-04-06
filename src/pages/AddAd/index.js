@@ -1,4 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
+import { useHistory } from "react-router-dom";
 import { PageArea } from "./styled";
 import {PageContainer, PageTitle, ErrorMessage} from '../../components/MainComponents';
 import useAPI from '../../helpers/OlxAPI';
@@ -8,11 +9,12 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
 const Page= () =>{
     const api = useAPI();
+    const history = useHistory();
     const fileField = useRef();
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
     const [price, setPrice] = useState('');
-    const [priceNegotiable, SetPriceNegoatiable] = useState(false);
+    const [priceNegotiable, setPriceNegoatiable] = useState(false);
     const [desc, setDesc] = useState('');
     const [categories, setCategories] = useState([]);
     
@@ -22,7 +24,7 @@ const Page= () =>{
     useEffect(()=>{
         const getCategories = async ()=>{
             const cats = await api.getCategories();
-            setCategories(cats)
+            setCategories(cats);
         }
         getCategories();
     },[])
@@ -30,16 +32,44 @@ const Page= () =>{
     const handleSubmit = async (e) =>{
         e.preventDefault();
         setDisabled(true);
+        setError('');
 
-      /*  const json = await api.login(email, password);
-        if(json.error){
-            setError(json.error);
+        let errors = [];
+
+        if(!title.trim()) {
+            errors.push('Insira um titulo');
+        }
+        if(!category) {
+            errors.push('Insira uma categoria')
+        }
+        if(errors.length === 0){
+            const fData = new FormData();
+            fData.append('title', title);
+            fData.append('price', price);
+            fData.append('priceneg', priceNegotiable);
+            fData.append('desc', desc );
+            fData.append('cat', category);
+
+            if(fileField.current.files.length > 0){
+                for (let i=0; i<fileField.current.files.length; i++){
+                    fData.append('img', fileField.current.files[i]);
+                }
+            }
+
+            const json = await api.addAd(fData);
+            
+            if(!json.error){
+                history.push(`/ad/${json.id}`);
+                return;
+            }else{
+                setError(json.error);
+            }
+
         }else{
-            doLogin(json.token, rememberPassword);
-            window.location.href = '/';
+            setError(errors.join("\n"));
+        }
 
-        }*/
-        setDisabled(false);
+       //setDisabled(false);
     };
 
     const priceMask = createNumberMask({
@@ -100,18 +130,14 @@ const Page= () =>{
                             <input type="checkbox"
                             disabled={disabled}
                             checked={priceNegotiable}
-                            onChange={e=>SetPriceNegoatiable(!priceNegotiable)}
+                            onChange={e=>setPriceNegoatiable(!priceNegotiable)}
                             ></input>
                         
                     </label> 
                     <label className="area">
                         <div className="area--title">Descrição</div>
                         <div className="area--input">
-                            <textarea
-                                disabled={disabled}
-                                value={desc}
-                                onchange={e=>setDesc(e.target.value)}
-                            ></textarea>
+                            <textarea value={desc} disabled={disabled} onChange={e=>setDesc(e.target.value)}></textarea>
                         </div>
                     </label>
 

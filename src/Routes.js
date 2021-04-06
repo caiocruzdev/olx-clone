@@ -8,6 +8,7 @@ import SignUp from './pages/signup';
 import AdPage from './pages/adpage/index';
 import AddAd from './pages/AddAd';
 import NotFound from './pages/NotFound/NotFound';
+import Ads from './pages/Ads';
 
 
 function Routes(){
@@ -28,6 +29,9 @@ function Routes(){
             </RouteHandler>
             <RouteHandler exact = {true} path='/ad/:id'>
                 <AdPage/>
+            </RouteHandler>
+            <RouteHandler exact = {true} path='/ads'>
+                <Ads/>
             </RouteHandler>
             <RouteHandler private exact = {true} path='/post-an-ad'>
             <AddAd/>
