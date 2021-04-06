@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useHistory } from 'react-router-dom';
 import AdItem from '../../components/partials/aditem';
 
-
+let timer;
 const Page= () =>{
     const api = useAPI();
     const history = useHistory();
@@ -21,6 +21,20 @@ const Page= () =>{
     const [stateList, setStateList] = useState([]);
     const [categories, setCategories] = useState([]);
     const [adList, setAdList] = useState([]);
+    const [resultOpacity, setResultOpacity] = useState(1);
+
+    const getAdsList = async ()=>{
+        const json = await api.getAds({
+            sort: 'desc',
+            limit:12,
+            q,
+            cat,
+            state
+
+        });
+        setAdList(json.ads);
+        setResultOpacity(1);
+    }
 
     useEffect(()=>{
         let queryString = [];
@@ -35,7 +49,14 @@ const Page= () =>{
         }
         history.replace({
             search:`?${queryString.join('&')}` //trocar a url sem atualizar a pagina
-        })
+        });
+        
+        if(timer){
+            clearTimeout(timer);
+        }
+        timer = setTimeout(getAdsList, 1500);
+        setResultOpacity(0.3);
+
     },[q, cat, state])
 
     useEffect( () => {
@@ -54,18 +75,6 @@ const Page= () =>{
         getCategories();
     }, []);
 
-    useEffect( ()=>{
-        const getRecentAds = async () =>{
-            const json = await api.getAds({
-                sort: 'desc',
-                limit:8
-
-            });
-            setAdList(json.ads);
-           
-        }
-        getRecentAds();
-    }, []);
     
     
     return(
@@ -101,7 +110,13 @@ const Page= () =>{
                     </ul>
                 </div>
                 <div className="rightSide">
-                    ...
+                    <h2>Resultados</h2>
+                    <div className="list" style={{opacity:resultOpacity}}>
+                                {adList.map((index,key)=>
+                                    <AdItem key={key} data={index}></AdItem>
+                                )}
+                    </div>
+
                 </div>
             </PageArea>
         </PageContainer>
