@@ -18,6 +18,8 @@ const Page= () =>{
     const [q, setQ] = useState(query.get('q') != null ? query.get('q') : ''); //verifica se o valor de query.get('q') é nulo, se nao for nulo ele pega o valor query.get('q') caso contrario ele assume o valor de ' ';
     const [cat, setCat] = useState(query.get('cat') != null ? query.get('cat') : '' );
     const [state, setState] = useState(query.get('state') != null ? query.get('state') : '');
+    const [adsTotal, setAdsTotal] = useState(0);
+    const [pageCount, setPageCount] = useState(0);
     const [stateList, setStateList] = useState([]);
     const [categories, setCategories] = useState([]);
     const [adList, setAdList] = useState([]);
@@ -29,16 +31,25 @@ const Page= () =>{
         setLoading(true);
         const json = await api.getAds({
             sort: 'desc',
-            limit:12,
+            limit:9,
             q,
             cat,
             state
 
         });
         setAdList(json.ads);
+        setAdsTotal(json.total);
         setResultOpacity(1);
         setLoading(false);
     }
+
+    useEffect(()=>{
+        if(adList.length > 0){
+        setPageCount( Math.ceil( adsTotal / adList.length ));
+        }else{
+            setPageCount(0);
+        }
+    },[adsTotal])
 
     useEffect(()=>{
         let queryString = [];
@@ -79,6 +90,11 @@ const Page= () =>{
         getCategories();
     }, []);
 
+    let pagination = [];
+    for(let i = 1; i<=pageCount; i++){
+        pagination.push(i)
+    }
+
     
     
     return(
@@ -116,7 +132,7 @@ const Page= () =>{
                 <div className="rightSide">
                     <h2>Resultados</h2>
                     {loading &&
-                        <div className="listWarning">Carregando</div>
+                        <div className="listWarning">Carregando...</div>
                     }
                     {!loading && adList.length === 0 &&
                         <div className="listWarning">Nao encontramos resultados</div>
@@ -125,6 +141,12 @@ const Page= () =>{
                                 {adList.map((index,key)=>
                                     <AdItem key={key} data={index}></AdItem>
                                 )}
+                    </div>
+
+                    <div className="pagination">
+                        {pagination.map((index, key)=>
+                            <div className="pagItem">{index}</div>
+                        )}
                     </div>
 
                 </div>
