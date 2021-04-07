@@ -20,6 +20,7 @@ const Page= () =>{
     const [state, setState] = useState(query.get('state') != null ? query.get('state') : '');
     const [adsTotal, setAdsTotal] = useState(0);
     const [pageCount, setPageCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [stateList, setStateList] = useState([]);
     const [categories, setCategories] = useState([]);
     const [adList, setAdList] = useState([]);
@@ -29,12 +30,14 @@ const Page= () =>{
 
     const getAdsList = async ()=>{
         setLoading(true);
+        let offset = ((currentPage-1) *9);
         const json = await api.getAds({
             sort: 'desc',
             limit:9,
             q,
             cat,
-            state
+            state,
+            offset
 
         });
         setAdList(json.ads);
@@ -50,6 +53,11 @@ const Page= () =>{
             setPageCount(0);
         }
     },[adsTotal])
+
+    useEffect(()=>{
+        setResultOpacity(0.3);
+        getAdsList();
+    },[currentPage])
 
     useEffect(()=>{
         let queryString = [];
@@ -71,6 +79,7 @@ const Page= () =>{
         }
         timer = setTimeout(getAdsList, 1500);
         setResultOpacity(0.3);
+        setCurrentPage(1); //selecionar pagina 1 a cada nova pesquisa
 
     },[q, cat, state])
 
@@ -131,7 +140,7 @@ const Page= () =>{
                 </div>
                 <div className="rightSide">
                     <h2>Resultados</h2>
-                    {loading &&
+                    {loading && adList.length === 0 &&
                         <div className="listWarning">Carregando...</div>
                     }
                     {!loading && adList.length === 0 &&
@@ -145,7 +154,7 @@ const Page= () =>{
 
                     <div className="pagination">
                         {pagination.map((index, key)=>
-                            <div className="pagItem">{index}</div>
+                            <div onClick={()=>setCurrentPage(index)} className={index === currentPage ? 'pagItem active':'pagItem'}>{index}</div>
                         )}
                     </div>
 

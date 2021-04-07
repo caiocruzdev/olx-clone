@@ -84,12 +84,19 @@ export const PageArea = styled.div `
         .pagItem{
             width:30px;
             height:30px;
-            border: 1px solid #000;
+            border: 1px solid #EEE9E9;
             display:flex;
             align-items:center;
             justify-content:center;
             font-size:14px;
             margin-right:7px;
+            cursor:pointer;
+            &:hover{
+                border:1px solid #999;
+            }
+            &.active{
+                background-color:#EEE9E9;
+            }
 
         }
     }
